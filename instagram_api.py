@@ -11,6 +11,7 @@ MAX_PAGINATION_LIMIT = 2
 class InstagramApi:
 
 	def __init__(self, access_token):
+		requests.packages.urllib3.disable_warnings()
 		r = requests.get(INSTAGRAM_SELF_URL % access_token).json()
 		self.data = r['data']
 		self.access_token = access_token
