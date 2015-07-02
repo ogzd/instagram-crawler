@@ -4,14 +4,14 @@ from instagram_api import InstagramApi
 from instagram_util import UserIdBag
 from gender_detector import GenderDetector
 
-ACCESS_TOKEN = '185951628.d6244e2.fdafd9835b9e48ae965eb4202749a139'
+ACCESS_TOKEN = open("access_token.txt").read()
 BAG_LIMIT = 1000000
 
 gender_detector = GenderDetector('us')
 
 def search(api, bag):
 	while True:
-		if len(bag) > BAG_LIMIT: break
+	        if len(bag) > BAG_LIMIT: break
 
 		user_id = bag.pick_random()
 		bag.remove(user_id)
@@ -48,5 +48,5 @@ def search_by_query(query):
 	search(api, bag)
 
 if __name__ == '__main__':
-	search_by_me()
+	search_by_query("emilie")
 
