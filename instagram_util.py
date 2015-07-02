@@ -1,5 +1,6 @@
 import re
 import random
+from instagram_api import InstagramApi
 
 def utf8(txt):
 	return txt.encode('utf-8').strip().lower()
@@ -27,7 +28,27 @@ class UserIdBag:
 		self.user_id_bag = self.user_id_bag | user_ids
 
 class InstagramUser:
-	def __init__(self, **userInfo):
-		self.user_id = userInfo['user_id']
-		self.full_name = userInfo['full_name']
-		self.bio = userInfo['bio']
+	def __init__(self, options):
+		self.api = options['api']
+		self.user_id = options['user_id']
+		self.full_name, self.bio = self.get_details()
+
+	def get_details(self):
+		return self.api.get_username_bio(self.user_id)
+
+class InstagramUsers:
+	def __init__(self, **options):
+		self.access_token = options['access_token']
+		self.api = InstagramApi(self.access_token)
+		if 'init_bag' in options: self.bag = UserIdBag(options['init_bag'])
+		elif 'query' in options: self.bag = UserIdBag(api.search_users(options['query']))
+		else self.bag = UserIdBag(set([api.my_user_id]))
+
+	def get(self):
+		user_id = self.bag.pick_random()
+		self.bag.remove(user_id)
+		
+
+	def insert(self, user_ids):
+		self.bag.insert(user_ids)
+
