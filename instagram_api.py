@@ -52,6 +52,5 @@ class InstagramApi:
 
 	def get_friends_infos(self, user_id):
 		d = {}
-		for data in self.get_followedby_infos(user_id): d[data['id']] = data
 		for data in self.get_following_infos(user_id): d[data['id']] = data
 		return d.values()
