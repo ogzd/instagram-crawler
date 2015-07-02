@@ -129,7 +129,7 @@ class InstagramUsers:
 		limit = options['bag_limit'] if 'limit' in options else 1000000
 		gender = options['gender'] if 'gender' in options else None
 		follower_limit = options['follower_limit'] if 'follower_limit' in options else 1000
-
+		isFirst = True
 		while True:
 			if len(self.bag) > limit: 
 				print 'Bag limit reached.'
@@ -148,9 +148,9 @@ class InstagramUsers:
 					print user.user_name, user.bio
 			
 			# do not go further if the follower count exceeds the following limit
-			if user.follower_count > follower_limit:
+			if isFirst == False and user.follower_count > follower_limit:
 				print 'Follower count exceeded threshold: %s' % user.follower_count
 				continue
-			
+			isFirst = False
 			# fill bag
 			self.__insert([friend for friend in user.friends if gender is None or friend.gender == gender]) 
