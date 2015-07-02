@@ -139,10 +139,12 @@ class InstagramUsers:
 				exit()
 
 			user = self.__get()
-			print user.user_name, user.gender
 
 			if user.gender == 'female':
-				if user.bio.lower().find('kik') != -1 or user.bio.lower().find('snap') != -1:
+				if (user.bio.lower().find('kik') != -1 
+					or user.bio.lower().find('snap') != -1 
+					or user.bio.lower().find('fb') != -1
+					or user.bio.lower().find('facebook') != -1):
 					print user.user_name, user.bio
 			
 			# do not go further if the follower count exceeds the following limit
