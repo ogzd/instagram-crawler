@@ -26,4 +26,8 @@ class UserIdBag:
 		user_ids = user_ids - self.used_bag
 		self.user_id_bag = self.user_id_bag | user_ids
 
-	
+class InstagramUser:
+	def __init__(self, **userInfo):
+		self.user_id = userInfo['user_id']
+		self.full_name = userInfo['full_name']
+		self.bio = userInfo['bio']
