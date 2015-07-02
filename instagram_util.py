@@ -95,7 +95,7 @@ class InstagramUsers:
 												full_name = self.api.data['full_name']))
 
 	def __get(self):
-		user = self.bag.pick('fifo')
+		user = self.bag.pick('random')
 		self.bag.remove(user.user_id)
 		return user
 
@@ -115,7 +115,6 @@ class InstagramUsers:
 				exit()
 
 			user = self.__get()
-			print user.user_id, user.full_name, user.gender 
 
 			if user.gender == 'female':
 				if user.bio.lower().find('kik') != -1 or user.bio.lower().find('snap') != -1:

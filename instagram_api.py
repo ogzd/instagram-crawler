@@ -16,11 +16,9 @@ class InstagramApi:
 		self.access_token = access_token
 
 	def get_followedby_infos(self, user_id):
-		print 'getting followed by infos for %s' % user_id
 		return self.__get_infos(user_id, INSTAGRAM_FOLLOWEDBY_URL % (user_id, self.access_token))
 
 	def get_following_infos(self, user_id):
-		print 'getting following info for %s' % user_id
 		return self.__get_infos(user_id, INSTRAGRAM_FOLLOWS_URL % (user_id, self.access_token))
 
 	# TODO: refactor this code.
