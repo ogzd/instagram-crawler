@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
+from instagram_util import InstagramUser
+from instagram_util import InstagramUserBag
 from instagram_util import InstagramUsers
+from instagram_api import InstagramApi
+
 
 ACCESS_TOKEN = open("access_token.txt").read()
 
@@ -24,7 +28,13 @@ ACCESS_TOKEN = open("access_token.txt").read()
 # 	return female_ids
 
 def search_by_me():
-	users = InstagramUsers(access_token = ACCESS_TOKEN)
+	api = InstagramApi(ACCESS_TOKEN)
+	bag = InstagramUserBag(InstagramUser(api = api, 
+										 user_name = api.data['username'],
+										 profile_picture = api.data['profile_picture'],
+										 user_id = api.data['id'],
+										 full_name = api.data['full_name']))
+	users = InstagramUsers(api, bag, access_token = ACCESS_TOKEN)
 	users.search(bag_limit = 10000, gender = 'female')
 
 # NOT SUPPORTED ATM

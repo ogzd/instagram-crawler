@@ -108,14 +108,9 @@ class InstagramUser:
 		return fullname; 
 
 class InstagramUsers:
-	def __init__(self, **options):
-		self.access_token = options['access_token']
-		self.api = InstagramApi(self.access_token)
-		self.bag = InstagramUserBag(InstagramUser(api = self.api, 
-												user_name = self.api.data['username'],
-												profile_picture = self.api.data['profile_picture'],
-												user_id = self.api.data['id'],
-												full_name = self.api.data['full_name']))
+	def __init__(self, api, bag, **options):
+		self.api = api
+		self.bag = bag
 
 	def __get(self):
 		user = self.bag.pick('random')
@@ -139,7 +134,7 @@ class InstagramUsers:
 				exit()
 
 			user = self.__get()
-
+			
 			if user.gender == 'female':
 				if (user.bio.lower().find('kik') != -1 
 					or user.bio.lower().find('snap') != -1 
