@@ -1,10 +1,6 @@
 import requests
 from instagram_util import asciify
 
-CLIENT_ID 		= 'd6244e297ac24ceeb7e40bd2a8115e6a'
-CLIENT_SECRET 	= '000ccb0537314540b4a60904072b4242'
-REDIRECT_URI	= 'http://ogzd.me'
-
 INSTAGRAM_USER_SEARCH = 'https://api.instagram.com/v1/users/search?q=%s&access_token=%s'
 INSTAGRAM_USER_BASIC = 'https://api.instagram.com/v1/users/%s/?access_token=%s'
 INSTAGRAM_SELF_URL = 'https://api.instagram.com/v1/users/self?access_token=%s'
@@ -14,6 +10,7 @@ INSTRAGRAM_FOLLOWS_URL = 'https://api.instagram.com/v1/users/%s/follows?access_t
 class InstagramApi:
 
 	def __init__(self, access_token):
+                requests.packages.urllib3.disable_warnings()
 		r = requests.get(INSTAGRAM_SELF_URL % access_token).json()
 		self.my_user_id = r['data']['id']
 		self.access_token = access_token
