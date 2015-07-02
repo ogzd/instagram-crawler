@@ -14,6 +14,7 @@ INSTRAGRAM_FOLLOWS_URL = 'https://api.instagram.com/v1/users/%s/follows?access_t
 class InstagramApi:
 
 	def __init__(self, access_token):
+                requests.packages.urllib3.disable_warnings()
 		r = requests.get(INSTAGRAM_SELF_URL % access_token).json()
 		self.my_user_id = r['data']['id']
 		self.access_token = access_token
