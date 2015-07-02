@@ -11,7 +11,11 @@ gender_detector = GenderDetector('us')
 
 def search(api, bag):
 	while True:
-	        if len(bag) > BAG_LIMIT: break
+		if len(bag) > BAG_LIMIT: break
+
+		if len(bag) == 0:
+			print("Empty bag.")
+			exit()
 
 		user_id = bag.pick_random()
 		bag.remove(user_id)
@@ -28,7 +32,7 @@ def search(api, bag):
 
 		# detect gender
 		gender = gender_detector.guess(fullname)
-		print username, fullname, bio
+		print fullname
 
 		if gender == 'female':
 			print username, fullname, bio
@@ -39,7 +43,7 @@ def search(api, bag):
 
 def search_by_me():
 	api = InstagramApi(ACCESS_TOKEN)
-	bag = UserIdBag(set([api.my_user_id]))
+	bag = UserIdBag(api.get_following_ids(api.my_user_id))
 	search(api, bag)
 
 def search_by_query(query):
@@ -48,5 +52,5 @@ def search_by_query(query):
 	search(api, bag)
 
 if __name__ == '__main__':
-	search_by_query("emilie")
+	search_by_me()
 
