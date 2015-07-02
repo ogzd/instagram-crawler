@@ -4,6 +4,7 @@ from instagram_api import InstagramApi
 from instagram_util import UserIdBag
 from gender_detector import GenderDetector
 import re
+import random
 
 ACCESS_TOKEN = open("access_token.txt").read()
 BAG_LIMIT = 1000000
@@ -23,7 +24,6 @@ def search(api, bag):
 
 		username, fullname, bio = api.get_username_bio(user_id)	
 		first_name = get_first_name(fullname)
-		print(first_name)
 		if first_name == None: continue
 		
 		# detect gender
@@ -42,9 +42,11 @@ def add_female_friends(bag, api, user_id):
 def get_female_friends(api, user_id):
 	# fill bag
 	user_ids = api.get_accessable_user_ids(user_id)
+	# sample to 100 friends due to request limitations
+	user_ids = random.sample(user_ids, min(len(user_ids), 100))
 	female_ids = set()
 	for user_id in user_ids:
-		username, fullname, bioo = api.get_username_bio(user_id)
+		username, fullname, bio = api.get_username_bio(user_id)
 		first_name = get_first_name(fullname)
 		if first_name == None: continue
 		if gender_detector.guess(first_name) == 'female':
