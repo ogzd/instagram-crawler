@@ -50,13 +50,36 @@ class InstagramUser:
 		self.full_name = asciify(options['full_name'])
 		self.first_name = self.__get_first_name()
 		self.gender = self.__get_gender()
+		self._follower_count = None
+		self._following_count = None
 		self._bio = None 		# lazy init
 		self._friends = None 	# lazy init
 
 	@property
+	def follower_count(self):
+		if self._follower_count is None:
+			user_info = self.api.get_user_info(self.user_id)
+			self._follower_count = int(user_info['counts']['followed_by']) if 'counts' in user_info else -1
+			self._following_count = int(user_info['counts']['follows']) if 'counts' in user_info else -1
+			self._bio = asciify(user_info['bio']) if 'bio' in user_info else ''
+		return self._follower_count
+
+	@property
+	def following_count(self):
+		if self._following_count is None:
+			user_info = self.api.get_user_info(self.user_id)
+			self._follower_count = int(user_info['counts']['followed_by']) if 'counts' in user_info else -1
+			self._following_count = int(user_info['counts']['follows']) if 'counts' in user_info else -1
+			self._bio = asciify(user_info['bio']) if 'bio' in user_info else '' 
+		return self._following_count
+
+	@property
 	def bio(self):
 		if self._bio is None: 
-			self._bio = asciify(self.api.get_bio(self.user_id))
+			user_info = self.api.get_user_info(self.user_id)
+			self._follower_count = int(user_info['counts']['followed_by']) if 'counts' in user_info else -1
+			self._following_count = int(user_info['counts']['follows']) if 'counts' in user_info else -1
+			self._bio = asciify(user_info['bio']) if 'counts' in user_info else ''
 		return self._bio
 
 	@property
@@ -103,8 +126,9 @@ class InstagramUsers:
 		self.bag.insert(set(users))
 
 	def search(self, **options):
-		limit = options['limit'] if 'limit' in options else 1000000
+		limit = options['bag_limit'] if 'limit' in options else 1000000
 		gender = options['gender'] if 'gender' in options else None
+		follower_limit = options['follower_limit'] if 'follower_limit' in options else 1000
 
 		while True:
 			if len(self.bag) > limit: 
@@ -115,10 +139,16 @@ class InstagramUsers:
 				exit()
 
 			user = self.__get()
+			print user.user_name, user.gender
 
 			if user.gender == 'female':
 				if user.bio.lower().find('kik') != -1 or user.bio.lower().find('snap') != -1:
 					print user.user_name, user.bio
+			
+			# do not go further if the follower count exceeds the following limit
+			if user.follower_count > follower_limit:
+				print 'Follower count exceeded threshold: %s' % user.follower_count
+				continue
 			
 			# fill bag
 			self.__insert([friend for friend in user.friends if gender is None or friend.gender == gender]) 

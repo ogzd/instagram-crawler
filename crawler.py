@@ -25,7 +25,7 @@ ACCESS_TOKEN = open("access_token.txt").read()
 
 def search_by_me():
 	users = InstagramUsers(access_token = ACCESS_TOKEN)
-	users.search(limit = 10000, gender = 'female')
+	users.search(bag_limit = 10000, gender = 'female')
 
 # NOT SUPPORTED ATM
 # def search_by_query(query):
