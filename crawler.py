@@ -5,8 +5,7 @@ from instagram_util import InstagramUserBag
 from instagram_util import InstagramUsers
 from instagram_api import InstagramApi
 
-
-ACCESS_TOKEN = open("access_token.txt").read()
+ACCESS_TOKEN = [line.rstrip('\n') for line in open('access_token.txt')][0]
 api = InstagramApi(ACCESS_TOKEN)
 
 def search_by_me():	
