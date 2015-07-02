@@ -149,8 +149,9 @@ class InstagramUsers:
 			
 			# do not go further if the follower count exceeds the following limit
 			if isFirst == False and user.follower_count > follower_limit:
-				print 'Follower count exceeded threshold: %s' % user.follower_count
+				#print 'Follower count exceeded threshold: %s' % user.follower_count
 				continue
+
 			isFirst = False
 			# fill bag
 			self.__insert([friend for friend in user.friends if gender is None or friend.gender == gender]) 
