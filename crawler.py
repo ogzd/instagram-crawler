@@ -3,6 +3,7 @@
 from instagram_api import InstagramApi
 from instagram_util import UserIdBag
 from gender_detector import GenderDetector
+import re
 
 ACCESS_TOKEN = open("access_token.txt").read()
 BAG_LIMIT = 1000000
@@ -21,21 +22,22 @@ def search(api, bag):
 		bag.remove(user_id)
 
 		username, fullname, bio = api.get_username_bio(user_id)
-		
+		if fullname: fullname = fullname.strip()
+
 		# hack on name
-		if fullname == None or fullname == '': continue
+		if not fullname or fullname == None or fullname == '': continue
 		if len(fullname.split(' ')) == 1: pass
 		if len(fullname.split(' ')) == 2: fullname = fullname.split(' ')[0]
 		if len(fullname.split(' ')) == 3: fullname = fullname.split(' ')[0]
 		if len(fullname.split(' ')) > 3:  fullname = ''.join(fullname.split(' '))
-		if not fullname.isalnum(): continue 
+		if not re.match("^[A-Za-z]*$", fullname): continue 
 
 		# detect gender
 		gender = gender_detector.guess(fullname)
-		print fullname
 
 		if gender == 'female':
-			print username, fullname, bio
+			if bio.lower().find("kik") != -1:
+				print username, bio
 		
 		# fill bag
 		user_ids = api.get_accessable_user_ids(user_id)
