@@ -43,7 +43,7 @@ def search(api, bag):
 
 def search_by_me():
 	api = InstagramApi(ACCESS_TOKEN)
-	bag = UserIdBag(api.get_following_ids(api.my_user_id))
+	bag = UserIdBag(api.get_accessable_user_ids(api.my_user_id))
 	search(api, bag)
 
 def search_by_query(query):
