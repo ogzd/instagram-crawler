@@ -12,17 +12,25 @@ def asciify(txt):
 	return re.sub(r'[^\x00-\x7F]+','', utf8(txt))
 
 class InstagramUserBag:
+
 	def __init__(self, init_user):
 		# store Instagram User's data
 		self.user_bag = { init_user.user_id: init_user }  
 		# store used user ids
 		self.used_bag = set()
+		self.pick_strategy = { 'random': self.__pick_random, 'fifo': self.__pick_fifo }
 
 	def __len__(self):
 		return len(self.user_bag)
 
-	def pick_random(self):
+	def pick(self, strategy):
+		return self.pick_strategy[strategy]()  
+
+	def __pick_random(self):
 		return random.sample(self.user_bag.values(), 1)[0]
+
+	def __pick_fifo(self):
+		return self.user_bag.values()[0]
 
 	def remove(self, user_id):
 		self.user_bag.pop(user_id, None)
@@ -87,7 +95,7 @@ class InstagramUsers:
 												full_name = self.api.data['full_name']))
 
 	def __get(self):
-		user = self.bag.pick_random()
+		user = self.bag.pick('fifo')
 		self.bag.remove(user.user_id)
 		return user
 
