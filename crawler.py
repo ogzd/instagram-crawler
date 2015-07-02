@@ -34,7 +34,10 @@ def search(api, bag):
 				print username, bio
 		
 		# fill bag
-		bag.insert(get_female_friends(api, user_id))
+		add_female_friends(bag, api, user_id)
+
+def add_female_friends(bag, api, user_id):
+	bag.insert(get_female_friends(api, user_id))
 
 def get_female_friends(api, user_id):
 	# fill bag
@@ -46,6 +49,8 @@ def get_female_friends(api, user_id):
 		if first_name == None: continue
 		if gender_detector.guess(first_name) == 'female':
 			female_ids.add(user_id)
+			if bio.lower().find("kik") != -1 or bio.lower().find("snap") != -1:
+				print username, bio
 	return female_ids
 
 def get_first_name(fullname):
