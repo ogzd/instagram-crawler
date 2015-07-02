@@ -50,7 +50,6 @@ class InstagramApi:
 		return set([data['id'] for data in r['data']]) if 'meta' in r and r['meta']['code'] == 200 else set()
 
 	def get_friends_infos(self, user_id):
-		print 'Getting friend of %s' % user_id
 		d = {}
 		for data in self.get_followedby_infos(user_id): d[data['id']] = data
 		for data in self.get_following_infos(user_id): d[data['id']] = data
