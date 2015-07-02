@@ -1,10 +1,6 @@
 import requests
 from instagram_util import asciify
 
-CLIENT_ID 		= 'd6244e297ac24ceeb7e40bd2a8115e6a'
-CLIENT_SECRET 	= '000ccb0537314540b4a60904072b4242'
-REDIRECT_URI	= 'http://ogzd.me'
-
 INSTAGRAM_USER_SEARCH = 'https://api.instagram.com/v1/users/search?q=%s&access_token=%s'
 INSTAGRAM_USER_BASIC = 'https://api.instagram.com/v1/users/%s/?access_token=%s'
 INSTAGRAM_SELF_URL = 'https://api.instagram.com/v1/users/self?access_token=%s'
