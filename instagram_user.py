@@ -1,6 +1,7 @@
 import re
 
 from gender_detector import GenderDetector
+
 gender_detector = GenderDetector('us')
 
 class InstagramUser:
