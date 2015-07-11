@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from instagram_util import InstagramUser
-from instagram_util import InstagramUserBag
+from instagram_user import InstagramUser
+from instagram_user_bag import InstagramUserBag
 from instagram_util import InstagramUsers
 from instagram_api import InstagramApi
 
