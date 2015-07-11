@@ -5,6 +5,8 @@ from instagram_api import InstagramApi
 from gender_detector import GenderDetector
 gender_detector = GenderDetector('us')
 
+INF = 1000000000
+
 def utf8(txt):
 	return txt.encode('utf-8').strip().lower()
 
@@ -123,6 +125,7 @@ class InstagramUsers:
 	def search(self, **options):
 		limit = options['bag_limit'] if 'limit' in options else 1000000
 		gender = options['gender'] if 'gender' in options else None
+		maxDepth = options['depth'] if 'depth' in options else 
 		follower_limit = options['follower_limit'] if 'follower_limit' in options else 1000
 		isFirst = True
 		while True:
