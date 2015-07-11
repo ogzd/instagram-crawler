@@ -7,9 +7,6 @@ from instagram_user import InstagramUser
 
 INF = 1000000000
 
-def utf8(txt):
-	return txt.encode('utf-8').strip().lower()
-
 def get_instagram_user(api, username):
 	r = requests.get('http://instagram.com/%s/' % username)
 	# parse user block
@@ -33,7 +30,10 @@ def get_instagram_user(api, username):
 		user_name = ret['user']['username'],
 		profile_picture = ret['user']['profile_pic_url'],
 		user_id = ret['user']['id'],
-		full_name = ret['user']['full_name'])
+		full_name = ret['user']['full_name'],
+		follower_count = ret['user']['followed_by'],
+		following_count = ret['user']['follows'],
+		biography = ret['user']['biography'])
 
 class InstagramUsers:
 	def __init__(self, api, bag, **options):

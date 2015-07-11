@@ -12,9 +12,9 @@ class InstagramUser:
 		self.full_name = self.__asciify(options['full_name']) if options['full_name'] else None
 		self.first_name = self.__get_first_name()
 		self.gender = self.__get_gender()
-		self._follower_count = None
-		self._following_count = None
-		self._bio = None 		# lazy init
+		self._follower_count = options['follower_count']
+		self._following_count = options['following_count']
+		self._bio = options['biography']
 		self._friends = None 	# lazy init
 
 	def __eq__(self, other):

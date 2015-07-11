@@ -25,7 +25,7 @@ def search_by_me():
 
 if __name__ == '__main__':
 	##search_by_me()
-	print get_instagram_user(api, "ortschun").user_name
+	print get_instagram_user(api, "fatos_dmrbg").profile_picture
 
 
 	
