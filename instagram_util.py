@@ -149,7 +149,6 @@ class InstagramUsers:
 		maxDepth = options['depth'] if 'depth' in options else INF
 
 		follower_limit = options['follower_limit'] if 'follower_limit' in options else 1000
-		isFirst = True
 		depth = 0
 		while True:
 			if len(self.bag) > limit: 
@@ -171,10 +170,9 @@ class InstagramUsers:
 					print user.user_name, user.bio
 			
 			# do not go further if the follower count exceeds the following limit
-			if (isFirst == False and user.follower_count > follower_limit) or depth + 1 == maxDepth:
+			if (depth == 0 and user.follower_count > follower_limit) or depth + 1 == maxDepth:
 				#print 'Follower count exceeded threshold: %s' % user.follower_count
 				continue
 
-			isFirst = False
 			# fill bag
 			self.__insert([friend for friend in user.friends if gender is None or friend.gender == gender], depth + 1) 
