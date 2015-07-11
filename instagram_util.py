@@ -57,6 +57,13 @@ class InstagramUser:
 		self._bio = None 		# lazy init
 		self._friends = None 	# lazy init
 
+	def __eq__(self, other):
+        return (isinstance(other, self.__class__)
+            and self.user_id == other.user_id)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
 	@property
 	def follower_count(self):
 		if self._follower_count is None:
@@ -125,9 +132,11 @@ class InstagramUsers:
 	def search(self, **options):
 		limit = options['bag_limit'] if 'limit' in options else 1000000
 		gender = options['gender'] if 'gender' in options else None
-		maxDepth = options['depth'] if 'depth' in options else 
+		maxDepth = options['depth'] if 'depth' in options else INF
+
 		follower_limit = options['follower_limit'] if 'follower_limit' in options else 1000
 		isFirst = True
+		depth = 0
 		while True:
 			if len(self.bag) > limit: 
 				print 'Bag limit reached.'
