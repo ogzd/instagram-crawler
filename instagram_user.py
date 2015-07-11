@@ -1,4 +1,3 @@
-from instagram_util import asciify
 import re
 
 from gender_detector import GenderDetector
@@ -10,7 +9,7 @@ class InstagramUser:
 		self.user_name = options['user_name']
 		self.profile_picture = options['profile_picture']
 		self.user_id = options['user_id']
-		self.full_name = asciify(options['full_name'])
+		self.full_name = self.__asciify(options['full_name']) if options['full_name'] else None
 		self.first_name = self.__get_first_name()
 		self.gender = self.__get_gender()
 		self._follower_count = None
@@ -27,13 +26,20 @@ class InstagramUser:
 	def __hash__(self):
 		return hash(self.user_id);
 
+
+	def __asciify(self, txt):
+		return re.sub(r'[^\x00-\x7F]+','', self.__utf8(txt))
+
+	def __utf8(self, txt):
+		return txt.encode('utf-8').strip().lower()
+
 	@property
 	def follower_count(self):
 		if self._follower_count is None:
 			user_info = self.api.get_user_info(self.user_id)
 			self._follower_count = int(user_info['counts']['followed_by']) if 'counts' in user_info else -1
 			self._following_count = int(user_info['counts']['follows']) if 'counts' in user_info else -1
-			self._bio = asciify(user_info['bio']) if 'bio' in user_info else ''
+			self._bio = self.__asciify(user_info['bio']) if 'bio' in user_info else ''
 		return self._follower_count
 
 	@property
@@ -42,7 +48,7 @@ class InstagramUser:
 			user_info = self.api.get_user_info(self.user_id)
 			self._follower_count = int(user_info['counts']['followed_by']) if 'counts' in user_info else -1
 			self._following_count = int(user_info['counts']['follows']) if 'counts' in user_info else -1
-			self._bio = asciify(user_info['bio']) if 'bio' in user_info else '' 
+			self._bio = self.__asciify(user_info['bio']) if 'bio' in user_info else '' 
 		return self._following_count
 
 	@property
@@ -51,7 +57,7 @@ class InstagramUser:
 			user_info = self.api.get_user_info(self.user_id)
 			self._follower_count = int(user_info['counts']['followed_by']) if 'counts' in user_info else -1
 			self._following_count = int(user_info['counts']['follows']) if 'counts' in user_info else -1
-			self._bio = asciify(user_info['bio']) if 'counts' in user_info else ''
+			self._bio = self.__asciify(user_info['bio']) if 'counts' in user_info else ''
 		return self._bio
 
 	@property
