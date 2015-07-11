@@ -47,7 +47,7 @@ class InstagramUserBag:
 		for user in users: self.user_bag[user.user_id] = user
 		self.depths[user.user_id] = depth
 
-	def get_depth(user_id):
+	def get_depth(self, user_id):
 		return self.depths[user_id] 
 
 class InstagramUser:
@@ -65,11 +65,10 @@ class InstagramUser:
 		self._friends = None 	# lazy init
 
 	def __eq__(self, other):
-        return (isinstance(other, self.__class__)
-            and self.user_id == other.user_id)
+		return (isinstance(other, self.__class__) and self.user_id == other.user_id)
 
-    def __ne__(self, other):
-        return not self.__eq__(other)
+	def __ne__(self, other):
+		return not self.__eq__(other)
 
 	@property
 	def follower_count(self):
