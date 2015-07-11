@@ -1,39 +1,10 @@
 import re
 import random
 import requests
-import json
 from instagram_api import InstagramApi
 from instagram_user import InstagramUser
 
 INF = 1000000000
-
-def get_instagram_user(api, username):
-	r = requests.get('http://instagram.com/%s/' % username)
-	# parse user block
-	index = r.text.find('"user":')
-	start = index
-	while r.text[index] != '{':
-		index += 1
-	index += 1
-	cnt = 1
-	# go until we hit the end of the user block
-	while cnt != 0:
-		if (r.text[index] == '{'):
-			cnt += 1
-		elif r.text[index] == '}':
-			cnt -= 1
-		index += 1
-
-	json_string = "{%s}" % format(r.text[start : index])
-	ret = json.loads(json_string)
-	return InstagramUser(api = api, 
-		user_name = ret['user']['username'],
-		profile_picture = ret['user']['profile_pic_url'],
-		user_id = ret['user']['id'],
-		full_name = ret['user']['full_name'],
-		follower_count = ret['user']['followed_by'],
-		following_count = ret['user']['follows'],
-		biography = ret['user']['biography'])
 
 class InstagramUsers:
 	def __init__(self, api, bag, **options):
@@ -64,7 +35,6 @@ class InstagramUsers:
 				exit()
 
 			user = self.__get()
-
 			depth = self.bag.get_depth(user.user_id)
 
 			if user.gender == 'female':

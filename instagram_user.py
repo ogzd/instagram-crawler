@@ -13,9 +13,9 @@ class InstagramUser:
 		self.full_name = self.__asciify(options['full_name']) if options['full_name'] else None
 		self.first_name = self.__get_first_name()
 		self.gender = self.__get_gender()
-		self._follower_count = options['follower_count']
-		self._following_count = options['following_count']
-		self._bio = options['biography']
+		self.follower_count = options['follower_count']
+		self.following_count = options['following_count']
+		self.bio = "" if options['biography'] is None else options['biography']
 		self._friends = None 	# lazy init
 
 	def __eq__(self, other):
@@ -37,7 +37,7 @@ class InstagramUser:
 	@property
 	def friends(self):
 		if self._friends is None: 
-			self._friends = [get_instagram_user(api, data['username']) for data in self.api.get_friends_infos(self.user_id)]
+			self._friends = [self.api.get_instagram_user(data['username']) for data in self.api.get_friends_infos(self.user_id)]
 		return self._friends
 
 	def __get_gender(self):

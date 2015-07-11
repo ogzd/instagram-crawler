@@ -1,4 +1,5 @@
-import requests, re
+import requests, re, json
+from instagram_user import InstagramUser
 
 INSTAGRAM_USER_SEARCH = 'https://api.instagram.com/v1/users/search?q=%s&access_token=%s'
 INSTAGRAM_USER_BASIC = 'https://api.instagram.com/v1/users/%s/?access_token=%s'
@@ -37,6 +38,34 @@ class InstagramApi:
 				break
 			url = r['pagination']['next_url']
 		return infos
+
+	def get_instagram_user(self, username):
+		r = requests.get('http://instagram.com/%s/' % username)
+		# parse user block
+		index = r.text.find('"user":')
+		start = index
+		while r.text[index] != '{':
+			index += 1
+		index += 1
+		cnt = 1
+		# go until we hit the end of the user block
+		while cnt != 0:
+			if (r.text[index] == '{'):
+				cnt += 1
+			elif r.text[index] == '}':
+				cnt -= 1
+			index += 1
+
+		json_string = "{%s}" % format(r.text[start : index])
+		ret = json.loads(json_string)
+		return InstagramUser(api = self, 
+			user_name = ret['user']['username'],
+			profile_picture = ret['user']['profile_pic_url'],
+			user_id = ret['user']['id'],
+			full_name = ret['user']['full_name'],
+			follower_count = ret['user']['followed_by'],
+			following_count = ret['user']['follows'],
+			biography = ret['user']['biography'])
 
 	def search_users(self, query):
 		r = requests.get(INSTAGRAM_USER_SEARCH % (query, self.access_token)).json()
