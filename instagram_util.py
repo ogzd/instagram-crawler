@@ -20,6 +20,8 @@ class InstagramUserBag:
 		self.user_bag = { init_user.user_id: init_user }  
 		# store used user ids
 		self.used_bag = set()
+		self.depths = dict()
+		self.depths[init_user.user_id] = 0
 		self.pick_strategy = { 'random': self.__pick_random, 'fifo': self.__pick_fifo }
 
 	def __len__(self):
@@ -37,11 +39,16 @@ class InstagramUserBag:
 	def remove(self, user_id):
 		self.user_bag.pop(user_id, None)
 		self.used_bag.add(user_id)
+		del self.depths[user_id]
 
-	def insert(self, users):
+	def insert(self, users, depth):
 		users = [user for user in users if not user.user_id in self.used_bag] # not used
 		users = [user for user in users if not user.user_id in self.user_bag] # not already in
 		for user in users: self.user_bag[user.user_id] = user
+		self.depths[user.user_id] = depth
+
+	def get_depth(user_id):
+		return self.depths[user_id] 
 
 class InstagramUser:
 	def __init__(self, **options):
@@ -121,13 +128,17 @@ class InstagramUsers:
 		self.api = api
 		self.bag = bag
 
+
+	def __get_depth(self, user):
+		return self.bag.get_depth(user.user_id)
+
 	def __get(self):
 		user = self.bag.pick('random')
 		self.bag.remove(user.user_id)
 		return user
 
-	def __insert(self, users):
-		self.bag.insert(set(users))
+	def __insert(self, users, depth):
+		self.bag.insert(set(users), depth)
 
 	def search(self, **options):
 		limit = options['bag_limit'] if 'limit' in options else 1000000
@@ -147,6 +158,8 @@ class InstagramUsers:
 
 			user = self.__get()
 			
+			depth = self.__get_depth(user)
+
 			if user.gender == 'female':
 				if (user.bio.lower().find('kik') != -1 
 					or user.bio.lower().find('snap') != -1 
@@ -155,10 +168,10 @@ class InstagramUsers:
 					print user.user_name, user.bio
 			
 			# do not go further if the follower count exceeds the following limit
-			if isFirst == False and user.follower_count > follower_limit:
+			if (isFirst == False and user.follower_count > follower_limit) or depth + 1 == maxDepth:
 				#print 'Follower count exceeded threshold: %s' % user.follower_count
 				continue
 
 			isFirst = False
 			# fill bag
-			self.__insert([friend for friend in user.friends if gender is None or friend.gender == gender]) 
+			self.__insert([friend for friend in user.friends if gender is None or friend.gender == gender], depth + 1) 
