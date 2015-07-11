@@ -38,14 +38,6 @@ class InstagramApi:
 			url = r['pagination']['next_url']
 		return infos
 
-	def get_user_info(self, user_id):
-		r = requests.get(INSTAGRAM_USER_BASIC % (user_id, self.access_token)).json()
-		return r['data'] if 'meta' in r and r['meta']['code'] == 200 else {}
-
-	def get_bio(self, user_id):
-		user_info = self.get_user_info(user_id)
-		return user_info['bio'] if 'bio' in user_info else ''
-
 	def search_users(self, query):
 		r = requests.get(INSTAGRAM_USER_SEARCH % (query, self.access_token)).json()
 		return set([data['id'] for data in r['data']]) if 'meta' in r and r['meta']['code'] == 200 else set()
