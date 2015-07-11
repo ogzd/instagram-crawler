@@ -43,8 +43,10 @@ class InstagramUserBag:
 	def insert(self, users, depth):
 		users = [user for user in users if not user.user_id in self.used_bag] # not used
 		users = [user for user in users if not user.user_id in self.user_bag] # not already in
-		for user in users: self.user_bag[user.user_id] = user
-		self.depths[user.user_id] = depth
+		for user in users:
+			self.user_bag[user.user_id] = user
+			self.depths[user.user_id] = depth
+
 
 	def get_depth(self, user_id):
 		return self.depths[user_id] 
