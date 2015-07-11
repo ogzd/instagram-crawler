@@ -39,7 +39,6 @@ class InstagramUserBag:
 	def remove(self, user_id):
 		self.user_bag.pop(user_id, None)
 		self.used_bag.add(user_id)
-		del self.depths[user_id]
 
 	def insert(self, users, depth):
 		users = [user for user in users if not user.user_id in self.used_bag] # not used
@@ -69,6 +68,9 @@ class InstagramUser:
 
 	def __ne__(self, other):
 		return not self.__eq__(other)
+
+	def __hash__(self):
+		return hash(self.user_id);
 
 	@property
 	def follower_count(self):
