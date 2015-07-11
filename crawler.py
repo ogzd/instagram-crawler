@@ -24,8 +24,7 @@ def search_by_me():
 # 	users.search()
 
 if __name__ == '__main__':
-	##search_by_me()
-	print get_instagram_user(api, "fatos_dmrbg").profile_picture
+	search_by_me()
 
 
 	
