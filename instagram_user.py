@@ -34,40 +34,9 @@ class InstagramUser:
 		return txt.encode('utf-8').strip().lower()
 
 	@property
-	def follower_count(self):
-		if self._follower_count is None:
-			user_info = self.api.get_user_info(self.user_id)
-			self._follower_count = int(user_info['counts']['followed_by']) if 'counts' in user_info else -1
-			self._following_count = int(user_info['counts']['follows']) if 'counts' in user_info else -1
-			self._bio = self.__asciify(user_info['bio']) if 'bio' in user_info else ''
-		return self._follower_count
-
-	@property
-	def following_count(self):
-		if self._following_count is None:
-			user_info = self.api.get_user_info(self.user_id)
-			self._follower_count = int(user_info['counts']['followed_by']) if 'counts' in user_info else -1
-			self._following_count = int(user_info['counts']['follows']) if 'counts' in user_info else -1
-			self._bio = self.__asciify(user_info['bio']) if 'bio' in user_info else '' 
-		return self._following_count
-
-	@property
-	def bio(self):
-		if self._bio is None: 
-			user_info = self.api.get_user_info(self.user_id)
-			self._follower_count = int(user_info['counts']['followed_by']) if 'counts' in user_info else -1
-			self._following_count = int(user_info['counts']['follows']) if 'counts' in user_info else -1
-			self._bio = self.__asciify(user_info['bio']) if 'counts' in user_info else ''
-		return self._bio
-
-	@property
 	def friends(self):
 		if self._friends is None: 
-			self._friends = [InstagramUser(api = self.api, 
-										user_name = data['username'],
-										profile_picture = data['profile_picture'],
-										user_id = data['id'],
-										full_name = data['full_name']) for data in self.api.get_friends_infos(self.user_id)]
+			self._friends = [get_instagram_user(api, data['username']) for data in self.api.get_friends_infos(self.user_id)]
 		return self._friends
 
 	def __get_gender(self):
