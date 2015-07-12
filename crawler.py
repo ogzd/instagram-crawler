@@ -7,7 +7,7 @@ from instagram_api import InstagramApi
 import logging
 logging.basicConfig()
 logger = logging.getLogger('crawler')
-logger.setLevel(logging.DEBUG) # enable debugging
+# logger.setLevel(logging.DEBUG) # enable debugging
 
 ACCESS_TOKEN = [line.rstrip('\n') for line in open('access_token.txt')][0]
 logger.debug('Access token received: %s' % ACCESS_TOKEN)
@@ -29,4 +29,3 @@ def search_by_me():
 
 if __name__ == '__main__':
 	search_by_me()
-	
