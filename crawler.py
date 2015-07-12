@@ -11,7 +11,7 @@ api = InstagramApi(ACCESS_TOKEN)
 def search_by_me():	
 	bag = InstagramUserBag(api.get_instagram_user(api.data['username']))
 	users = InstagramUsers(api, bag, access_token = ACCESS_TOKEN)
-	users.search(bag_limit = 10000, gender = 'female', depth = 2)
+	users.search(bag_limit = 10000, gender = 'female', depth = 5)
 
 # NOT SUPPORTED ATM
 # def search_by_query(query):

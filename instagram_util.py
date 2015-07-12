@@ -35,6 +35,7 @@ class InstagramUsers:
 				exit()
 
 			user = self.__get()
+			
 			depth = self.bag.get_depth(user.user_id)
 
 			if user.gender == 'female':
@@ -43,9 +44,8 @@ class InstagramUsers:
 					or user.bio.lower().find('fb') != -1
 					or user.bio.lower().find('facebook') != -1):
 					print user.user_name, user.bio
-			
 			# do not go further if the follower count exceeds the following limit
-			if (depth != 0 and user.follower_count > follower_limit) or depth + 1 == maxDepth:
+			if (depth == 0 and user.follower_count > follower_limit) or depth + 1 == maxDepth:
 				#print 'Follower count exceeded threshold: %s' % user.follower_count
 				continue
 
