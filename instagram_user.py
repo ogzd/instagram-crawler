@@ -1,8 +1,10 @@
 import re
 
 from gender_detector import GenderDetector
-
 gender_detector = GenderDetector('us')
+
+import logging
+logger = logging.getLogger('crawler.instagram_user')
 
 class InstagramUser:
 	def __init__(self, **options):
@@ -15,7 +17,7 @@ class InstagramUser:
 		self.gender = self.__get_gender()
 		self.follower_count = options['follower_count']
 		self.following_count = options['following_count']
-		self.bio = "" if options['biography'] is None else options['biography']
+		self.bio = '' if options['biography'] is None else options['biography']
 		self._friends = None 	# lazy init
 
 	def __eq__(self, other):
@@ -36,11 +38,13 @@ class InstagramUser:
 
 	@property
 	def friends(self):
-		if self._friends is None: 
+		if self._friends is None:
+			logger.debug('Requesting friends info for user: %s' % self.user_name) 
 			self._friends = [self.api.get_instagram_user(data['username']) for data in self.api.get_friends_infos(self.user_id)]
 		return self._friends
 
 	def __get_gender(self):
+		logger.debug('Guessing gender for user: %s' % self.user_name)
 		return gender_detector.guess(self.first_name) if self.first_name != None else 'unknown' 
 
 	def __get_first_name(self):
@@ -52,5 +56,5 @@ class InstagramUser:
 		if len(fullname.split(' ')) == 2: fullname = fullname.split(' ')[0]
 		if len(fullname.split(' ')) == 3: fullname = fullname.split(' ')[0]
 		if len(fullname.split(' ')) > 3:  fullname = ''.join(fullname.split(' '))
-		if not re.match("^[A-Za-z]*$", fullname): return None
+		if not re.match('^[A-Za-z]*$', fullname): return None
 		return fullname; 

@@ -3,14 +3,23 @@ from instagram_user import InstagramUser
 from instagram_user_bag import InstagramUserBag
 from instagram_users import InstagramUsers
 from instagram_api import InstagramApi
-import re
+
+import logging
+logging.basicConfig()
+logger = logging.getLogger('crawler')
+logger.setLevel(logging.DEBUG) # enable debugging
 
 ACCESS_TOKEN = [line.rstrip('\n') for line in open('access_token.txt')][0]
+logger.debug('Access token received: %s' % ACCESS_TOKEN)
+
 api = InstagramApi(ACCESS_TOKEN)
+logger.debug('Api is initialized for %s' % api.data['username'])
 
 def search_by_me():	
 	bag = InstagramUserBag(api.get_instagram_user(api.data['username']))
-	users = InstagramUsers(api, bag, access_token = ACCESS_TOKEN)
+	logger.debug('User bag is initialized.')
+	users = InstagramUsers(api, bag, strategy = 'random')
+	logger.debug('Started searching for users..')
 	users.search(bag_limit = 10000, gender = 'female', depth = 5)
 
 # NOT SUPPORTED ATM
@@ -20,8 +29,4 @@ def search_by_me():
 
 if __name__ == '__main__':
 	search_by_me()
-
-
 	
-
-

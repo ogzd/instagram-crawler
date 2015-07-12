@@ -1,5 +1,8 @@
 import random
 
+import logging
+logger = logging.getLogger('crawler.instagram_user_bag')
+
 class InstagramUserBag:
 
 	def __init__(self, init_user):

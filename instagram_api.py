@@ -1,5 +1,8 @@
-import requests, re, json
+import requests, re, json, logging
 from instagram_user import InstagramUser
+
+import logging
+logger = logging.getLogger('crawler.instagram_api')
 
 INSTAGRAM_USER_SEARCH = 'https://api.instagram.com/v1/users/search?q=%s&access_token=%s'
 INSTAGRAM_USER_BASIC = 'https://api.instagram.com/v1/users/%s/?access_token=%s'
@@ -18,9 +21,11 @@ class InstagramApi:
 		self.access_token = access_token
 
 	def get_followedby_infos(self, user_id):
+		logger.debug('Getting followedby infos for user: %s' % user_id)
 		return self.__get_infos(user_id, INSTAGRAM_FOLLOWEDBY_URL % (user_id, self.access_token))
 
 	def get_following_infos(self, user_id):
+		logger.debug('Getting followedby infos for user: %s' % user_id)
 		return self.__get_infos(user_id, INSTRAGRAM_FOLLOWS_URL % (user_id, self.access_token))
 
 	# TODO: refactor this code.
@@ -40,6 +45,7 @@ class InstagramApi:
 		return infos
 
 	def get_instagram_user(self, username):
+		logger.debug('Getting instagram user by html request for user: %s' % username)
 		r = requests.get('http://instagram.com/%s/' % username)
 		# parse user block
 		index = r.text.find('"user":')
@@ -56,22 +62,26 @@ class InstagramApi:
 				cnt -= 1
 			index += 1
 
-		json_string = "{%s}" % format(r.text[start : index])
+		json_string = '{%s}' % format(r.text[start : index])
 		ret = json.loads(json_string)
+		logger.debug('JSON data for user:\n%s' % ret)
+
 		return InstagramUser(api = self, 
 			user_name = ret['user']['username'],
 			profile_picture = ret['user']['profile_pic_url'],
 			user_id = ret['user']['id'],
 			full_name = ret['user']['full_name'],
-			follower_count = ret['user']['followed_by'],
-			following_count = ret['user']['follows'],
+			follower_count = ret['user']['followed_by']['count'],
+			following_count = ret['user']['follows']['count'],
 			biography = ret['user']['biography'])
 
 	def search_users(self, query):
+		logger.debug('Searching instagram users by query: %s' % query)
 		r = requests.get(INSTAGRAM_USER_SEARCH % (query, self.access_token)).json()
 		return set([data['id'] for data in r['data']]) if 'meta' in r and r['meta']['code'] == 200 else set()
 
 	def get_friends_infos(self, user_id):
+		logger.debug('Getting friends infos for user: %s' % user_id)
 		d = {}
 		for data in self.get_following_infos(user_id): d[data['id']] = data
 		return d.values()
