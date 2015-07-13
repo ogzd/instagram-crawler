@@ -40,7 +40,6 @@ class InstagramUsers:
 
 			user = self.__get()
 			logger.debug('Searching for %s' % user.user_name)
-
 			depth = self.bag.get_depth(user.user_id)
 			logger.debug('Depth of %s: %s' % (user.user_name, depth))
 
