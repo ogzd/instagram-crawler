@@ -20,7 +20,7 @@ def search_by_me():
 	logger.debug('User bag is initialized.')
 	users = InstagramUsers(api, bag, strategy = 'random')
 	logger.debug('Started searching for users..')
-	users.search(bag_limit = 10000, gender = 'female', depth = 5)
+	users.search(bag_limit = 10000, gender = 'female', depth = 2)
 
 # NOT SUPPORTED ATM
 # def search_by_query(query):

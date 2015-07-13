@@ -1,17 +1,16 @@
 import re
+import logging
 
 from threading import Thread
 from Queue import Queue
 from gender_detector import GenderDetector
+
 gender_detector = GenderDetector('us')
 
-<<<<<<< HEAD
-import logging
 logger = logging.getLogger('crawler.instagram_user')
-=======
+
 THREAD_COUNT = 10
 q = Queue(THREAD_COUNT * 2)
->>>>>>> parallelize info requests
 
 class InstagramUser:
 	def __init__(self, **options):
