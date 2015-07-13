@@ -1,10 +1,17 @@
 import re
 
+from threading import Thread
+from Queue import Queue
 from gender_detector import GenderDetector
 gender_detector = GenderDetector('us')
 
+<<<<<<< HEAD
 import logging
 logger = logging.getLogger('crawler.instagram_user')
+=======
+THREAD_COUNT = 10
+q = Queue(THREAD_COUNT * 2)
+>>>>>>> parallelize info requests
 
 class InstagramUser:
 	def __init__(self, **options):
@@ -38,10 +45,25 @@ class InstagramUser:
 
 	@property
 	def friends(self):
-		if self._friends is None:
+		if self._friends is None: 
 			logger.debug('Requesting friends info for user: %s' % self.user_name) 
-			self._friends = [self.api.get_instagram_user(data['username']) for data in self.api.get_friends_infos(self.user_id)]
+			for i in range(THREAD_COUNT):
+			    t = Thread(target=self.addFriends)
+			    t.daemon = True
+			    t.start()
+			self._friends = set()
+			usernames = [data['username'] for data in self.api.get_friends_infos(self.user_id)]
+			for username in usernames:
+				q.put(username)
+			q.join()
 		return self._friends
+
+	def addFriends(self):
+		while True:
+			username = q.get()
+			user = self.api.get_instagram_user(username)
+			self._friends.add(user)
+			q.task_done()
 
 	def __get_gender(self):
 		logger.debug('Guessing gender for user: %s' % self.user_name)
