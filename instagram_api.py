@@ -9,8 +9,12 @@ INSTAGRAM_USER_BASIC = 'https://api.instagram.com/v1/users/%s/?access_token=%s'
 INSTAGRAM_SELF_URL = 'https://api.instagram.com/v1/users/self?access_token=%s'
 INSTAGRAM_FOLLOWEDBY_URL = 'https://api.instagram.com/v1/users/%s/followed-by?access_token=%s'
 INSTRAGRAM_FOLLOWS_URL = 'https://api.instagram.com/v1/users/%s/follows?access_token=%s'
+INSTAGRAM_TAG_SEARCH = 'https://api.instagram.com/v1/tags/search?q=%s&access_token=%s'
+INSTAGRAM_TAG_BASIC = 'https://api.instagram.com/v1/tags/%s?access_token=%s'
+INSTAGRAM_TAG_RECENT_MEDIA = 'https://api.instagram.com/v1/tags/%s/media/recent?access_token=%s'
 
-MAX_PAGINATION_LIMIT = 2
+MAX_PAGINATION_LIMIT_MEDIA = 2
+MAX_PAGINATION_LIMIT_USER = 2
 
 class InstagramApi:
 
@@ -22,14 +26,14 @@ class InstagramApi:
 
 	def get_followedby_infos(self, user_id):
 		logger.debug('Getting followedby infos for user: %s' % user_id)
-		return self.__get_infos(user_id, INSTAGRAM_FOLLOWEDBY_URL % (user_id, self.access_token))
+		return self.__get_infos(INSTAGRAM_FOLLOWEDBY_URL % (user_id, self.access_token), MAX_PAGINATION_LIMIT_USER)
 
 	def get_following_infos(self, user_id):
 		logger.debug('Getting following infos for user: %s' % user_id)
-		return self.__get_infos(user_id, INSTRAGRAM_FOLLOWS_URL % (user_id, self.access_token))
+		return self.__get_infos(INSTRAGRAM_FOLLOWS_URL % (user_id, self.access_token), MAX_PAGINATION_LIMIT_USER)
 
 	# TODO: refactor this code.
-	def __get_infos(self, user_id, url):
+	def __get_infos(self, url, max_call_count):
 		infos = []
 		call_count = 0
 		while url:
@@ -39,7 +43,7 @@ class InstagramApi:
 			infos += r['data']
 			if 'next_url' not in r['pagination']: 
 				break
-			if call_count == MAX_PAGINATION_LIMIT:
+			if call_count == max_call_count:
 				break
 			url = r['pagination']['next_url']
 		return infos
@@ -78,6 +82,20 @@ class InstagramApi:
 		logger.debug('Searching instagram users by query: %s' % query)
 		r = requests.get(INSTAGRAM_USER_SEARCH % (query, self.access_token)).json()
 		return set([data['id'] for data in r['data']]) if 'meta' in r and r['meta']['code'] == 200 else set()
+
+	def search_tags(self, query):
+		logger.debug('Searching tags by query: %s' % query)
+		r = requests.get(INSTAGRAM_TAG_SEARCH % (query, self.access_token)).json()
+		return r['data'] if 'meta' in r and r['meta']['code'] == 200 else list()
+
+	def get_tag_info(self, tag_name):
+		logger.debug('Getting tag info for tag: %s' % tag_name)
+		r = requests.get(INSTAGRAM_TAG_BASIC % (tag_name, self.access_token)).json()
+		return r['data'] if 'meta' in r and r['meta']['code'] == 200 else dict()
+
+	def get_recent_media_by_tag(self, tag_name):
+		logger.debug('Getting recent media for tag: %s' % tag_name)
+		return self.__get_infos(INSTAGRAM_TAG_RECENT_MEDIA % (tag_name, self.access_token), MAX_PAGINATION_LIMIT_MEDIA)
 
 	# return only following data
 	def get_friends_infos(self, user_id):
