@@ -9,7 +9,7 @@ gender_detector = GenderDetector('us')
 
 logger = logging.getLogger('crawler.instagram_user')
 
-THREAD_COUNT = 10
+THREAD_COUNT = 5
 q = Queue(THREAD_COUNT * 2)
 
 class InstagramUser:

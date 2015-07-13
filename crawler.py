@@ -7,7 +7,7 @@ from instagram_api import InstagramApi
 import logging
 logging.basicConfig()
 logger = logging.getLogger('crawler')
-# logger.setLevel(logging.DEBUG) # enable debugging
+#logger.setLevel(logging.DEBUG) # enable debugging
 
 ACCESS_TOKEN = [line.rstrip('\n') for line in open('access_token.txt')][0]
 logger.debug('Access token received: %s' % ACCESS_TOKEN)
@@ -20,7 +20,7 @@ def search_by_me():
 	logger.debug('User bag is initialized.')
 	users = InstagramUsers(api, bag, strategy = 'random')
 	logger.debug('Started searching for users..')
-	users.search(bag_limit = 10000, gender = 'female', depth = 2)
+	users.search(bag_limit = 10000, gender = 'female', depth = 5)
 
 # NOT SUPPORTED ATM
 # def search_by_query(query):
