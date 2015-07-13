@@ -18,7 +18,7 @@ class InstagramUser:
 		# lazy init (these data are initialized all together when a query for any of them is made.)
 		self._follower_count = None
 		self._following_count = None
-		self._bio = ''
+		self._bio = None
 		self._friends = None
 
 	def __eq__(self, other):
@@ -39,7 +39,7 @@ class InstagramUser:
 
 	@property
 	def bio(self):
-		if self._bio is '':
+		if self._bio is None:
 			logger.debug('Initializing lazy info for user: %s' % self.user_name)
 			self._bio, self._follower_count, self._following_count = self.api.get_bio_and_follow_info(self.user_name)
 		return self._bio

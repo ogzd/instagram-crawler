@@ -57,15 +57,16 @@ class InstagramApi:
 		cnt = 1
 		# go until we hit the end of the user block
 		while cnt != 0:
-			if (r.text[index] == '{'):
+			if r.text[index] == '{':
 				cnt += 1
 			elif r.text[index] == '}':
 				cnt -= 1
 			index += 1
 
-		json_string = '{%s}' % format(r.text[start : index])
+		json_string = '{%s}' % r.text[start : index]
+		logger.debug('JSON data for user:\n%s' % json_string)
 		ret = json.loads(json_string)
-		logger.debug('JSON data for user:\n%s' % ret)
+
 		return ('' if ret['user']['biography'] is None else self.__asciify(ret['user']['biography']), 
 				0 if ret['user']['followed_by']['count'] is None else ret['user']['followed_by']['count'], 
 				0 if ret['user']['follows']['count'] is None else ret['user']['follows']['count'])
