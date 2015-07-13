@@ -55,11 +55,14 @@ class InstagramApi:
 			index += 1
 		index += 1
 		cnt = 1
+		ignore = False
 		# go until we hit the end of the user block
 		while cnt != 0:
-			if r.text[index] == '{':
+			if r.text[index] == '"' and r.text[index - 1] != '\\': # string start / end position
+				ignore = not ignore
+			if not ignore and r.text[index] == '{':
 				cnt += 1
-			elif r.text[index] == '}':
+			elif not ignore and r.text[index] == '}':
 				cnt -= 1
 			index += 1
 
