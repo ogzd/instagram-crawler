@@ -17,7 +17,7 @@ class InstagramApi:
 	def __init__(self, access_token):
 		requests.packages.urllib3.disable_warnings()
 		r = requests.get(INSTAGRAM_SELF_URL % access_token).json()
-		self.data = r['data']
+		self.root_user = self.data_to_user(r['data'])
 		self.access_token = access_token
 
 	def get_followedby_infos(self, user_id):
@@ -25,7 +25,7 @@ class InstagramApi:
 		return self.__get_infos(user_id, INSTAGRAM_FOLLOWEDBY_URL % (user_id, self.access_token))
 
 	def get_following_infos(self, user_id):
-		logger.debug('Getting followedby infos for user: %s' % user_id)
+		logger.debug('Getting following infos for user: %s' % user_id)
 		return self.__get_infos(user_id, INSTRAGRAM_FOLLOWS_URL % (user_id, self.access_token))
 
 	# TODO: refactor this code.
@@ -44,7 +44,8 @@ class InstagramApi:
 			url = r['pagination']['next_url']
 		return infos
 
-	def get_instagram_user(self, username):
+	# HTML scrapping code for retrieving bio and follower info
+	def get_bio_and_follow_info(self, username):
 		logger.debug('Getting instagram user by html request for user: %s' % username)
 		r = requests.get('http://instagram.com/%s/' % username)
 		# parse user block
@@ -65,23 +66,33 @@ class InstagramApi:
 		json_string = '{%s}' % format(r.text[start : index])
 		ret = json.loads(json_string)
 		logger.debug('JSON data for user:\n%s' % ret)
-
-		return InstagramUser(api = self, 
-			user_name = ret['user']['username'],
-			profile_picture = ret['user']['profile_pic_url'],
-			user_id = ret['user']['id'],
-			full_name = ret['user']['full_name'],
-			follower_count = ret['user']['followed_by']['count'],
-			following_count = ret['user']['follows']['count'],
-			biography = ret['user']['biography'])
+		return ('' if ret['user']['biography'] is None else self.__asciify(ret['user']['biography']), 
+				0 if ret['user']['followed_by']['count'] is None else ret['user']['followed_by']['count'], 
+				0 if ret['user']['follows']['count'] is None else ret['user']['follows']['count'])
 
 	def search_users(self, query):
 		logger.debug('Searching instagram users by query: %s' % query)
 		r = requests.get(INSTAGRAM_USER_SEARCH % (query, self.access_token)).json()
 		return set([data['id'] for data in r['data']]) if 'meta' in r and r['meta']['code'] == 200 else set()
 
+	# return only following data
 	def get_friends_infos(self, user_id):
 		logger.debug('Getting friends infos for user: %s' % user_id)
-		d = {}
-		for data in self.get_following_infos(user_id): d[data['id']] = data
-		return d.values()
+		return self.get_following_infos(user_id)
+
+	def __asciify(self, txt):
+		return re.sub(r'[^\x00-\x7F]+','', self.__utf8(txt))
+
+	def __utf8(self, txt):
+		return txt.encode('utf-8').strip().lower()
+
+	def data_to_user(self, data):
+		user_id = data['id'] if 'id' in data else None
+		user_name = data['username'] if 'username' in data else None
+		profile_picture = data['profile_picture'] if 'profile_picture' in data else None
+		full_name = self.__asciify(data['full_name']) if 'full_name' in data else None
+		return InstagramUser(api = self, 
+							user_id = user_id,
+							user_name = user_name,
+							profile_picture = profile_picture,
+							full_name = full_name) 

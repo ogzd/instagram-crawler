@@ -12,13 +12,14 @@ class InstagramUser:
 		self.user_name = options['user_name']
 		self.profile_picture = options['profile_picture']
 		self.user_id = options['user_id']
-		self.full_name = self.__asciify(options['full_name']) if options['full_name'] else None
+		self.full_name = options['full_name']
 		self.first_name = self.__get_first_name()
 		self.gender = self.__get_gender()
-		self.follower_count = options['follower_count']
-		self.following_count = options['following_count']
-		self.bio = '' if options['biography'] is None else options['biography']
-		self._friends = None 	# lazy init
+		# lazy init (these data are initialized all together when a query for any of them is made.)
+		self._follower_count = None
+		self._following_count = None
+		self._bio = ''
+		self._friends = None
 
 	def __eq__(self, other):
 		return (isinstance(other, self.__class__) and self.user_id == other.user_id)
@@ -29,19 +30,33 @@ class InstagramUser:
 	def __hash__(self):
 		return hash(self.user_id);
 
-
-	def __asciify(self, txt):
-		return re.sub(r'[^\x00-\x7F]+','', self.__utf8(txt))
-
-	def __utf8(self, txt):
-		return txt.encode('utf-8').strip().lower()
-
 	@property
 	def friends(self):
 		if self._friends is None:
 			logger.debug('Requesting friends info for user: %s' % self.user_name) 
-			self._friends = [self.api.get_instagram_user(data['username']) for data in self.api.get_friends_infos(self.user_id)]
+			self._friends = [self.api.data_to_user(data) for data in self.api.get_friends_infos(self.user_id)]
 		return self._friends
+
+	@property
+	def bio(self):
+		if self._bio is '':
+			logger.debug('Initializing lazy info for user: %s' % self.user_name)
+			self._bio, self._follower_count, self._following_count = self.api.get_bio_and_follow_info(self.user_name)
+		return self._bio
+
+	@property
+	def follower_count(self):
+		if self._follower_count is None:
+			logger.debug('Initializing lazy info for user: %s' % self.user_name)
+			self._bio, self._follower_count, self._following_count = self.api.get_bio_and_follow_info(self.user_name)
+		return self._follower_count
+
+	@property
+	def following_count(self):
+		if self._following_count is None:
+			logger.debug('Initializing lazy info for user: %s' % self.user_name)
+			self._bio, self._follower_count, self._following_count = self.api.get_bio_and_follow_info(self.user_name)
+		return self._following_count
 
 	def __get_gender(self):
 		logger.debug('Guessing gender for user: %s' % self.user_name)

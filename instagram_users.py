@@ -16,9 +16,7 @@ class InstagramUsers:
 		self.strategy = options['strategy'] if 'strategy' in options else 'random'
 
 	def __get(self):
-		user = self.bag.pick(self.strategy)
-		self.bag.remove(user.user_id)
-		return user
+		return self.bag.pick(self.strategy)
 
 	def __insert(self, users, depth):
 		self.bag.insert(set(users), depth)
@@ -39,10 +37,10 @@ class InstagramUsers:
 				exit()
 
 			user = self.__get()
-			logger.debug('Searching for %s' % user.user_name)
+			logger.info('Searching for %s' % user.user_name)
 
 			depth = self.bag.get_depth(user.user_id)
-			logger.debug('Depth of %s: %s' % (user.user_name, depth))
+			logger.info('Depth of %s: %s' % (user.user_name, depth))
 
 			if user.gender == 'female':
 				if (user.bio.lower().find('kik') != -1 
@@ -53,7 +51,7 @@ class InstagramUsers:
 
 			# do not go further if the follower count exceeds the following limit
 			if (depth != 0 and user.follower_count > follower_limit) or depth + 1 == maxDepth:
-				logger.debug('Follower count exceeded threshold: %s' % user.follower_count)
+				logger.debug('Follower count exceeded threshold: %s, %s' % (user.user_name, user.follower_count))
 				continue
 
 			# fill bag
